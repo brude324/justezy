@@ -1,0 +1,58 @@
+flowchart TD
+    %% Base Styling Definitions
+    classDef foundation fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#0D47A1;
+    classDef identity fill:#E8EAF6,stroke:#3F51B5,stroke-width:2px,color:#1A237E;
+    classDef tenant fill:#EDE7F6,stroke:#673AB7,stroke-width:2px,color:#311B92;
+    classDef membership fill:#F3E5F5,stroke:#9C27B0,stroke-width:2px,color:#4A148C;
+    classDef rbac fill:#FCE4EC,stroke:#E91E63,stroke-width:2px,color:#880E4F;
+    classDef domain fill:#FFF3E0,stroke:#FF9800,stroke-width:2px,color:#E65100;
+    classDef entitlement fill:#FFFDE7,stroke:#FBC02D,stroke-width:2px,color:#F57F17;
+    classDef screens fill:#E8F5E9,stroke:#4CAF50,stroke-width:2px,color:#1B5E20;
+    classDef workflows fill:#E0F7FA,stroke:#00BCD4,stroke-width:2px,color:#006064;
+    classDef reporting fill:#EFEBE9,stroke:#795548,stroke-width:2px,color:#3E2723;
+    classDef violation fill:#FFEBEE,stroke:#D32F2F,stroke-width:2px,stroke-dasharray: 5 5,color:#B71C1C;
+
+    subgraph TargetHierarchy ["Target SaaS Dependency Hierarchy (Proposed)"]
+        direction TB
+        FND["1. FOUNDATION<br/>• DB Connection Pooling<br/>• Prisma Extensions / Client Isolation<br/>• AsyncLocalStorage Context<br/>• Base Types & Utilities"]:::foundation
+        IDN["2. IDENTITY<br/>• Clerk Authentication / Identity<br/>• Application User Model<br/>• Webhook Identity Sync & Reconciliation"]:::identity
+        TNT["3. TENANT<br/>• Tenant / Institution Model<br/>• Server-Side Tenant Verification<br/>• Domain / Slug Resolution Policy"]:::tenant
+        MBR["4. MEMBERSHIP<br/>• TenantMembership (User ↔ Tenant)<br/>• Active Tenant Context Validation<br/>• Membership Status & Scope"]:::membership
+        RBC["5. RBAC & PERMISSIONS<br/>• Role, Permission, RolePermission<br/>• AccessScope: Platform vs Tenant<br/>• DB-Driven Policy Enforcement Engine"]:::rbac
+        DOM["6. TENANT-SCOPED DOMAIN<br/>• Domain Profiles: StudentProfile, StaffProfile<br/>• Subject, Class, Grade, Lesson, Exam<br/>• Scoped Composite Constraints"]:::domain
+        ENT["7. MODULE ENTITLEMENTS<br/>• ModuleEntitlement Records<br/>• Subscription Plans & Feature Gates<br/>• Institutional Feature Access"]:::entitlement
+        SCR["8. APPLICATION SCREENS<br/>• Dashboard Layout & Mobile PWA<br/>• List Screens & Detail Views<br/>• Authenticated & Guarded Action Modals"]:::screens
+        WKF["9. WORKFLOWS & BACKGROUND<br/>• Redis & BullMQ Workers<br/>• Notification Delivery & Bulk Imports<br/>• Secondary Event Processing"]:::workflows
+        RPT["10. REPORTING & ATOMIC AUDIT<br/>• Atomic Mutation Audit Logging<br/>• Academic Report Cards & Analytics<br/>• Aggregation Jobs & Exports"]:::reporting
+
+        FND --> IDN
+        IDN --> TNT
+        TNT --> MBR
+        IDN --> MBR
+        MBR --> RBC
+        RBC --> DOM
+        TNT --> DOM
+        DOM --> ENT
+        ENT --> SCR
+        RBC --> SCR
+        MBR --> SCR
+        SCR --> WKF
+        WKF --> RPT
+    end
+
+    subgraph ArchitecturalViolations ["Existing Codebase Conflicts & Inversions"]
+        direction TB
+        V1["VIOLATION 1: Role in Clerk Metadata<br/>• Clerk directly issues role claim<br/>• Skips DB Identity, Tenant, Membership & RBAC"]:::violation
+        V2["VIOLATION 2: Screens Bypass All Data Layers<br/>• RSC screens query unscoped global tables<br/>• Bypasses Tenant, Membership, and Domain Isolation"]:::violation
+        V3["VIOLATION 3: Inverted User Provisioning<br/>• Server Actions call Clerk API first<br/>• Bypasses DB User, Tenant & Audit layers"]:::violation
+        V4["VIOLATION 4: Global Constraint Violations<br/>• Subject, Class, Grade have global unique keys<br/>• Collides across tenants without tenantId scoping"]:::violation
+        V5["VIOLATION 5: Hardcoded UI Entitlements<br/>• Menu & Modals hardcode all 10 modules<br/>• Zero subscription or tenant-license checks"]:::violation
+    end
+
+    %% Dependency Conflict Mappings
+    V1 -.->|"Circumvents"| IDN
+    V1 -.->|"Bypasses"| RBC
+    V2 -.->|"Direct Unscoped Query"| DOM
+    V3 -.->|"Bypasses DB Outbox"| WKF
+    V4 -.->|"Blocks Multi-Tenancy"| TNT
+    V5 -.->|"Violates"| ENT

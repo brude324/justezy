@@ -1,0 +1,146 @@
+erDiagram
+    Admin {
+        String id PK
+        String username UK
+    }
+
+    Teacher {
+        String id PK
+        String username UK
+        String name
+        String surname
+        String email UK
+        String phone UK
+        String address
+        String img
+        String bloodType
+        UserSex sex
+        DateTime createdAt
+        DateTime birthday
+    }
+
+    Parent {
+        String id PK
+        String username UK
+        String name
+        String surname
+        String email UK
+        String phone UK
+        String address
+        DateTime createdAt
+    }
+
+    Student {
+        String id PK
+        String username UK
+        String name
+        String surname
+        String email UK
+        String phone UK
+        String address
+        String img
+        String bloodType
+        UserSex sex
+        DateTime createdAt
+        DateTime birthday
+        String parentId FK
+        Int classId FK
+        Int gradeId FK
+    }
+
+    Grade {
+        Int id PK
+        Int level UK
+    }
+
+    Class {
+        Int id PK
+        String name UK
+        Int capacity
+        String supervisorId FK
+        Int gradeId FK
+    }
+
+    Subject {
+        Int id PK
+        String name UK
+    }
+
+    Lesson {
+        Int id PK
+        String name
+        Day day
+        DateTime startTime
+        DateTime endTime
+        Int subjectId FK
+        Int classId FK
+        String teacherId FK
+    }
+
+    Exam {
+        Int id PK
+        String title
+        DateTime startTime
+        DateTime endTime
+        Int lessonId FK
+    }
+
+    Assignment {
+        Int id PK
+        String title
+        DateTime startDate
+        DateTime dueDate
+        Int lessonId FK
+    }
+
+    Result {
+        Int id PK
+        Int score
+        Int examId FK
+        Int assignmentId FK
+        String studentId FK
+    }
+
+    Attendance {
+        Int id PK
+        DateTime date
+        Boolean present
+        String studentId FK
+        Int lessonId FK
+    }
+
+    Event {
+        Int id PK
+        String title
+        String description
+        DateTime startTime
+        DateTime endTime
+        Int classId FK
+    }
+
+    Announcement {
+        Int id PK
+        String title
+        String description
+        DateTime date
+        Int classId FK
+    }
+
+    Parent ||--o{ Student : "parentId"
+    Class ||--o{ Student : "classId"
+    Grade ||--o{ Student : "gradeId"
+    Grade ||--o{ Class : "gradeId (classess)"
+    Teacher ||--o{ Class : "supervisorId"
+    Teacher }o--o{ Subject : "_SubjectToTeacher"
+    Subject ||--o{ Lesson : "subjectId"
+    Class ||--o{ Lesson : "classId"
+    Teacher ||--o{ Lesson : "teacherId"
+    Lesson ||--o{ Exam : "lessonId"
+    Lesson ||--o{ Assignment : "lessonId"
+    Lesson ||--o{ Attendance : "lessonId"
+    Student ||--o{ Attendance : "studentId"
+    Student ||--o{ Result : "studentId"
+    Exam ||--o{ Result : "examId"
+    Assignment ||--o{ Result : "assignmentId"
+    Class ||--o{ Event : "classId"
+    Class ||--o{ Announcement : "classId"

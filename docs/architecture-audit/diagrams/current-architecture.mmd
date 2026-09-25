@@ -1,0 +1,85 @@
+flowchart TD
+    subgraph ClientLayer ["Client Layer (Browser / Mobile Browser)"]
+        UI_Login["Login Page ([[...sign-in]])<br/>@clerk/elements"]
+        UI_Shell["Dashboard Layout Shell<br/>(Sidebar Menu + Navbar + UserButton)"]
+        UI_Dashboard["Role Dashboards<br/>(/admin, /teacher, /student, /parent)"]
+        UI_Lists["List Screens (10 modules)<br/>(/list/teachers, /list/students, etc.)"]
+        UI_Forms["Form Modals & Client Inputs<br/>(react-hook-form + zod)"]
+        CldWidget["Cloudinary Upload Widget<br/>(Unsigned Client Upload)"]
+    end
+
+    subgraph EdgeMiddleware ["Next.js Edge Middleware"]
+        MW["src/middleware.ts<br/>(clerkMiddleware)"]
+        RAM["src/lib/settings.ts<br/>(routeAccessMap)"]
+        MW --> RAM
+    end
+
+    subgraph ServerComponents ["Next.js Server Runtime (RSC)"]
+        RSC_Admin["admin/page.tsx<br/>(Direct Prisma Queries)"]
+        RSC_Teacher["teacher/page.tsx<br/>(Teacher lessons query)"]
+        RSC_Student["student/page.tsx<br/>(Student class query)"]
+        RSC_Parent["parent/page.tsx<br/>(Parent children query)"]
+        RSC_Lists["list/*/page.tsx<br/>(Manual role switch + pagination)"]
+        RSC_Containers["Chart & Calendar Containers<br/>(Aggregations & Date math)"]
+    end
+
+    subgraph ServerActions ["Server Actions (src/lib/actions.ts)"]
+        SA_Subject["create/update/delete Subject"]
+        SA_Class["create/update/delete Class"]
+        SA_Teacher["create/update/delete Teacher"]
+        SA_Student["create/update/delete Student"]
+        SA_Exam["create/update/delete Exam"]
+    end
+
+    subgraph ThirdPartyAuth ["Third-Party Identity Provider"]
+        ClerkAPI["Clerk Backend API<br/>(clerkClient.users)"]
+        ClerkSession["Clerk Session Token<br/>(sessionClaims.metadata.role)"]
+    end
+
+    subgraph DatabaseLayer ["Database (PostgreSQL via Prisma ORM)"]
+        PrismaSingleton["Prisma Client Singleton<br/>(src/lib/prisma.ts)"]
+        PG_DB[("PostgreSQL Database<br/>(Single Flat Schema)")]
+    end
+
+    subgraph ExternalStorage ["External Storage"]
+        CloudinaryCDN["Cloudinary Media CDN"]
+    end
+
+    %% Client Navigation Flow
+    UI_Login -->|"Sign-in credentials"| ClerkAPI
+    ClerkAPI -->|"JWT with publicMetadata.role"| UI_Login
+    UI_Login -->|"Redirect /${role}"| MW
+    MW -->|"Role check via JWT sessionClaims"| UI_Shell
+
+    UI_Shell --> UI_Dashboard
+    UI_Shell --> UI_Lists
+    UI_Lists --> UI_Forms
+    UI_Forms --> CldWidget
+    CldWidget -->|"Direct upload"| CloudinaryCDN
+
+    %% RSC Data Flow
+    UI_Dashboard --> RSC_Admin & RSC_Teacher & RSC_Student & RSC_Parent
+    UI_Lists --> RSC_Lists
+    RSC_Admin --> RSC_Containers
+    RSC_Teacher --> RSC_Containers
+    RSC_Student --> RSC_Containers
+    RSC_Parent --> RSC_Containers
+
+    RSC_Admin -->|"Direct prisma.*.findMany/count"| PrismaSingleton
+    RSC_Teacher -->|"Direct prisma.*"| PrismaSingleton
+    RSC_Student -->|"Direct prisma.*"| PrismaSingleton
+    RSC_Parent -->|"Direct prisma.*"| PrismaSingleton
+    RSC_Lists -->|"Direct prisma.$transaction([findMany, count])"| PrismaSingleton
+    RSC_Containers -->|"Direct prisma.*"| PrismaSingleton
+
+    %% Mutation Data Flow
+    UI_Forms -->|"useFormState() formAction"| ServerActions
+    SA_Teacher -->|"clerkClient.users.createUser()"| ClerkAPI
+    SA_Student -->|"clerkClient.users.createUser()"| ClerkAPI
+    SA_Teacher -->|"prisma.teacher.create()"| PrismaSingleton
+    SA_Student -->|"prisma.student.create()"| PrismaSingleton
+    SA_Subject -->|"prisma.subject.*"| PrismaSingleton
+    SA_Class -->|"prisma.class.*"| PrismaSingleton
+    SA_Exam -->|"prisma.exam.*"| PrismaSingleton
+
+    PrismaSingleton --> PG_DB
