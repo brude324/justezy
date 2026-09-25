@@ -1,0 +1,54 @@
+flowchart TD
+    subgraph CoreModules ["Core Academic Modules (Always Active)"]
+        direction TB
+        Mod_Staff["staff_directory"]
+        Mod_Student["student_directory"]
+        Mod_Parent["parent_directory"]
+        Mod_Academics["core_academics"]
+
+        Scr_Staff["/tenant/teachers<br/>/tenant/teachers/:id"]
+        Scr_Student["/tenant/students<br/>/tenant/students/:id"]
+        Scr_Parent["/tenant/parents"]
+        Scr_Academics["/tenant/classes<br/>/tenant/subjects<br/>/tenant/timetable"]
+
+        Mod_Staff --> Scr_Staff
+        Mod_Student --> Scr_Student
+        Mod_Parent --> Scr_Parent
+        Mod_Academics --> Scr_Academics
+    end
+
+    subgraph OptionalModules ["Optional Licensed Modules (Gated per Plan)"]
+        direction TB
+        Mod_Att["attendance_module"]
+        Mod_Exam["examination_module"]
+        Mod_Comms["communications"]
+        Mod_Reports["advanced_reports"]
+
+        Scr_Att["/tenant/attendance<br/>(Daily Roll-Call)"]
+        Scr_Exam["/tenant/exams<br/>/tenant/assignments<br/>/tenant/results"]
+        Scr_Comms["/tenant/announcements<br/>/tenant/events<br/>/tenant/notifications"]
+        Scr_Reports["/tenant/report-cards<br/>(PDF Generation)"]
+
+        Mod_Att --> Scr_Att
+        Mod_Exam --> Scr_Exam
+        Mod_Comms --> Scr_Comms
+        Mod_Reports --> Scr_Reports
+    end
+
+    subgraph FutureModules ["Future Roadmap Modules (V2 / V3 Placeholders)"]
+        direction TB
+        Mod_Fees["finance_module (V2)"]
+        Mod_Admissions["admissions_portal (V2)"]
+        Mod_Library["library_module (V2)"]
+        Mod_Transport["transport_module (V2)"]
+
+        Scr_Fees["/tenant/fees/*<br/>(Billing & Receipts)"]
+        Scr_Admissions["/tenant/admissions/*<br/>(Inquiry Pipeline)"]
+        Scr_Library["/tenant/library/*<br/>(Book Circulation)"]
+        Scr_Transport["/tenant/transport/*<br/>(Bus Routes & Fleet)"]
+
+        Mod_Fees --> Scr_Fees
+        Mod_Admissions --> Scr_Admissions
+        Mod_Library --> Scr_Library
+        Mod_Transport --> Scr_Transport
+    end

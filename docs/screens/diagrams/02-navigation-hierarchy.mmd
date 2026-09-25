@@ -1,0 +1,32 @@
+flowchart TD
+    subgraph NavigationRoot ["Dynamic Navigation Evaluation"]
+        AuthUser["Authenticated User Session"]
+        TenantContext["Active Tenant Membership Context"]
+        PermEngine["RBAC Permission & Scope Engine"]
+        Entitlements["Module Entitlement Filter"]
+
+        AuthUser --> TenantContext
+        TenantContext --> Entitlements
+        Entitlements --> PermEngine
+    end
+
+    subgraph NavigationShell ["Rendered Navigation Shells"]
+        PermEngine --> PublicNav["Public Navigation<br/>(Landing, Pricing, Find School)"]
+        PermEngine --> PlatformNav["Platform Admin Sidebar<br/>(Tenants, Plans, Global Users, Audit)"]
+        PermEngine --> InstAdminNav["Institution Admin Sidebar<br/>(Full School Operations & Governance)"]
+        PermEngine --> TeacherNav["Teacher Sidebar & Mobile Bottom<br/>(Schedule, Attendance, Marks, Classes)"]
+        PermEngine --> StudentNav["Student Bottom Bar & Drawer<br/>(Timetable, Homework, Marks, Notices)"]
+        PermEngine --> ParentNav["Parent Family Shell<br/>(Child Switcher, Attendance, Report Card)"]
+    end
+
+    subgraph SecondaryNavigation ["Contextual Navigation Elements"]
+        Breadcrumbs["Breadcrumb Path Bar<br/>(e.g. Home > Classes > 10A)"]
+        ActionCluster["Contextual Action Cluster<br/>(Search, Filter, Export, +Create)"]
+        ChildSwitcher["Multi-Child Dropdown<br/>(Parent Context Only)"]
+        UserMenu["Account & Tenant Switcher Popover<br/>(Universal Top Right)"]
+    end
+
+    InstAdminNav & TeacherNav & StudentNav & ParentNav --> Breadcrumbs
+    InstAdminNav & TeacherNav --> ActionCluster
+    ParentNav --> ChildSwitcher
+    NavigationShell --> UserMenu

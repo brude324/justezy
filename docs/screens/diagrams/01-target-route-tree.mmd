@@ -1,0 +1,79 @@
+flowchart TD
+    subgraph RootNamespace ["Application Root (/)"]
+        Root_Public["/public<br/>(Public Marketing & Discovery)"]
+        Root_Auth["/auth<br/>(Authentication & Identity)"]
+        Root_Platform["/platform<br/>(SaaS Control Plane)"]
+        Root_Tenant["/tenant<br/>(Institutional Workspaces)"]
+        Root_Account["/account<br/>(User Profile & Switcher)"]
+    end
+
+    subgraph PublicRoutes ["Public Routes (/public)"]
+        PUB_Landing["/public<br/>Landing Page"]
+        PUB_Pricing["/public/pricing<br/>Plan Matrix"]
+        PUB_Find["/public/find-school<br/>Portal Finder"]
+    end
+
+    subgraph AuthRoutes ["Authentication Routes (/auth)"]
+        AUT_SignIn["/auth/sign-in<br/>Clerk Login Portal"]
+        AUT_Invite["/auth/accept-invite<br/>Onboarding Wizard"]
+        AUT_MFA["/auth/mfa<br/>2FA Challenge"]
+        AUT_Reset["/auth/reset-password<br/>Password Recovery"]
+    end
+
+    subgraph PlatformRoutes ["Platform SaaS Control Plane (/platform)"]
+        PLT_Dash["/platform/dashboard<br/>Global Overview"]
+        PLT_Tenants["/platform/tenants<br/>Tenant Directory"]
+        PLT_NewTenant["/platform/tenants/new<br/>Provisioning Wizard"]
+        PLT_TenantDetail["/platform/tenants/:id<br/>School Management"]
+        PLT_Plans["/platform/plans<br/>Entitlement Catalog"]
+        PLT_Users["/platform/users<br/>Global Users"]
+        PLT_Audit["/platform/audit-logs<br/>Security Telemetry"]
+    end
+
+    subgraph TenantRoutes ["Institutional Tenant Workspace (/tenant)"]
+        TNT_Dash["/tenant/dashboard<br/>Role-Projected Dashboard"]
+        
+        subgraph PeopleSub ["People Directory"]
+            TNT_Teachers["/tenant/teachers<br/>Staff & Faculty"]
+            TNT_TeacherDetail["/tenant/teachers/:id<br/>Staff Profile"]
+            TNT_Students["/tenant/students<br/>Student Directory"]
+            TNT_StudentDetail["/tenant/students/:id<br/>Student 360 View"]
+            TNT_Parents["/tenant/parents<br/>Guardian Directory"]
+        end
+
+        subgraph AcademicSub ["Academic Operations"]
+            TNT_Years["/tenant/academic-years<br/>Academic Terms"]
+            TNT_Classes["/tenant/classes<br/>Sections & Rosters"]
+            TNT_Subjects["/tenant/subjects<br/>Curriculum Allocations"]
+            TNT_Timetable["/tenant/timetable<br/>Weekly Schedule Grid"]
+            TNT_Attendance["/tenant/attendance<br/>Daily Roll-Call Sheet"]
+        end
+
+        subgraph AssessmentSub ["Assessment & Grading"]
+            TNT_Exams["/tenant/exams<br/>Exam Periods"]
+            TNT_Assignments["/tenant/assignments<br/>Homework Directory"]
+            TNT_Results["/tenant/results<br/>Marks Entry & Scores"]
+            TNT_ReportCards["/tenant/report-cards<br/>Student Report Cards"]
+        end
+
+        subgraph CommsSub ["Communications & Settings"]
+            TNT_Announce["/tenant/announcements<br/>Circulars & Bulletins"]
+            TNT_Events["/tenant/events<br/>Calendar Feeds"]
+            TNT_Settings["/tenant/settings<br/>Branding & Profile"]
+            TNT_Roles["/tenant/roles<br/>RBAC Management"]
+            TNT_Audit["/tenant/audit-logs<br/>Institutional Audit"]
+        end
+    end
+
+    subgraph AccountRoutes ["Account Management (/account)"]
+        ACC_Profile["/account/profile<br/>Personal Identity"]
+        ACC_Security["/account/security<br/>Credentials & Sessions"]
+        ACC_Prefs["/account/preferences<br/>Notification Settings"]
+        ACC_Switch["/account/switch-tenant<br/>Active School Switcher"]
+    end
+
+    Root_Public --> PUB_Landing & PUB_Pricing & PUB_Find
+    Root_Auth --> AUT_SignIn & AUT_Invite & AUT_MFA & AUT_Reset
+    Root_Platform --> PLT_Dash & PLT_Tenants & PLT_NewTenant & PLT_TenantDetail & PLT_Plans & PLT_Users & PLT_Audit
+    Root_Tenant --> TNT_Dash & PeopleSub & AcademicSub & AssessmentSub & CommsSub
+    Root_Account --> ACC_Profile & ACC_Security & ACC_Prefs & ACC_Switch

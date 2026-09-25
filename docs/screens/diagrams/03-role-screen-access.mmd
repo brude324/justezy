@@ -1,0 +1,47 @@
+flowchart LR
+    subgraph Roles ["Standard User Roles"]
+        SuperAdmin["SaaS Super Admin<br/>(PlatformScope.GLOBAL)"]
+        SchoolAdmin["Institution Admin<br/>(TenantScope.INSTITUTION_WIDE)"]
+        Teacher["Teacher / Instructor<br/>(TenantScope.ASSIGNED_ONLY)"]
+        Student["Student Learner<br/>(TenantScope.SELF_ONLY)"]
+        Parent["Parent / Guardian<br/>(TenantScope.LINKED_CHILDREN)"]
+    end
+
+    subgraph PlatformScreens ["Platform Control Plane"]
+        S_Platform["/platform/*<br/>• Tenants<br/>• Plans<br/>• Global Audit"]
+    end
+
+    subgraph AdminScreens ["Institutional Governance"]
+        S_Gov["/tenant/* (Governance)<br/>• Settings<br/>• Roles & RBAC<br/>• Academic Years<br/>• Audit Logs"]
+    end
+
+    subgraph AcademicOps ["Classroom Operations & Assessment"]
+        S_Attendance["/tenant/attendance<br/>Daily Roll-Call"]
+        S_Marks["/tenant/results<br/>Marks Entry Grid"]
+        S_Exams["/tenant/exams<br/>Exam Schedules"]
+        S_Timetable["/tenant/timetable<br/>Weekly Schedule Grid"]
+    end
+
+    subgraph Directories ["People Directories"]
+        S_Students["/tenant/students<br/>Student Directory"]
+        S_Staff["/tenant/teachers<br/>Faculty Directory"]
+        S_Parents["/tenant/parents<br/>Parent Directory"]
+    end
+
+    subgraph LearnerFamily ["Personal Progress & Notices"]
+        S_Profile["/tenant/students/:id<br/>360 Profile"]
+        S_Report["/tenant/report-cards<br/>Report Cards"]
+        S_Notices["/tenant/announcements<br/>Circulars & Events"]
+    end
+
+    %% Role Access Mappings
+    SuperAdmin ==> S_Platform
+    SchoolAdmin ==> S_Gov & AcademicOps & Directories & LearnerFamily
+    Teacher -->|"Mark Attendance"| S_Attendance
+    Teacher -->|"Enter Marks"| S_Marks
+    Teacher -->|"View Schedule"| S_Timetable
+    Teacher -->|"Assigned Only"| S_Students
+    Teacher -->|"View Circulars"| S_Notices
+
+    Student -->|"Self Only"| S_Timetable & S_Report & S_Profile & S_Notices
+    Parent -->|"Linked Children Only"| S_Timetable & S_Report & S_Profile & S_Notices
