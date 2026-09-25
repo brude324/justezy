@@ -1,0 +1,61 @@
+erDiagram
+    %% Plane 1: SaaS Control Plane & Identity
+    Tenant ||--o{ TenantMembership : "has memberships"
+    Tenant ||--o{ TenantModuleEntitlement : "licenses"
+    SubscriptionPlan ||--o{ Tenant : "provisions"
+    Module ||--o{ TenantModuleEntitlement : "entitles"
+    User ||--o{ TenantMembership : "belongs to"
+    User ||--o{ Notification : "receives"
+    User ||--o{ NotificationPreference : "configures"
+
+    %% Plane 2: Dynamic RBAC
+    TenantMembership }o--|| Role : "assigned"
+    Role ||--o{ RolePermission : "defines"
+    Permission ||--o{ RolePermission : "granted"
+
+    %% Plane 3: Academic Structure
+    Tenant ||--o{ AcademicYear : "owns"
+    AcademicYear ||--o{ Term : "contains"
+    AcademicYear ||--o{ Class : "schedules"
+    Grade ||--o{ Class : "classifies"
+    Class ||--o{ ClassSubject : "teaches"
+    Subject ||--o{ ClassSubject : "assigned"
+
+    %% Plane 4: Persona Profiles
+    Tenant ||--o{ StaffProfile : "employs"
+    Tenant ||--o{ StudentProfile : "enrolls"
+    Tenant ||--o{ ParentProfile : "registers"
+    User ||--o| StaffProfile : "authenticates"
+    User ||--o| StudentProfile : "portal login"
+    User ||--o| ParentProfile : "portal login"
+    StaffProfile ||--o{ ClassSubject : "instructs"
+    StudentProfile ||--o{ StudentEnrollment : "placed in"
+    Class ||--o{ StudentEnrollment : "rosters"
+    StudentProfile ||--o{ StudentParentBinding : "child"
+    ParentProfile ||--o{ StudentParentBinding : "guardian"
+
+    %% Plane 5: Operations & Assessment
+    Class ||--o{ AttendanceRecord : "records"
+    StudentProfile ||--o{ AttendanceRecord : "attends"
+    Class ||--o{ TimetableLesson : "scheduled for"
+    Subject ||--o{ TimetableLesson : "course"
+    StaffProfile ||--o{ TimetableLesson : "teaches"
+    
+    Class ||--o{ Assignment : "assigned to"
+    Subject ||--o{ Assignment : "curriculum"
+    Assignment ||--o{ AssignmentSubmission : "receives"
+    StudentProfile ||--o{ AssignmentSubmission : "submits"
+
+    AcademicYear ||--o{ Exam : "administers"
+    Exam ||--o{ ExamPaper : "includes"
+    Subject ||--o{ ExamPaper : "tests"
+    ExamPaper ||--o{ ExamResult : "scores"
+    StudentProfile ||--o{ ExamResult : "earns"
+    StudentProfile ||--o{ ReportCard : "receives"
+    AcademicYear ||--o{ ReportCard : "evaluates"
+
+    %% Plane 6: Comms & Audit
+    Tenant ||--o{ Announcement : "broadcasts"
+    Tenant ||--o{ Event : "calendars"
+    Tenant ||--o{ AuditLog : "records"
+    Tenant ||--o{ DocumentReference : "stores"
