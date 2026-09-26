@@ -6,7 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "prisma:validate": "node scripts/prisma-validate.js",
+    "prisma:validate:target": "node scripts/prisma-validate.js --schema prisma/schema.target.prisma",
+    "prisma:generate": "prisma generate",
+    "prisma:generate:target": "prisma generate --schema prisma/schema.target.prisma",
+    "seed:target": "ts-node --compiler-options {\"module\":\"CommonJS\"} scripts/seed-target.ts",
+    "migrate:rehearse": "ts-node --compiler-options {\"module\":\"CommonJS\"} scripts/migrate-legacy-to-target.ts",
+    "reconcile:target": "ts-node --compiler-options {\"module\":\"CommonJS\"} scripts/reconcile-migration.ts"
   },
   "dependencies": {
     "@clerk/elements": "^0.14.6",
@@ -25,18 +36,25 @@
     "react-hook-form": "^7.52.2",
     "react-toastify": "^10.0.5",
     "recharts": "^2.12.7",
+    "svix": "^2.5.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.0.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
+    "jsdom": "^25.0.1",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^2.1.8"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"

@@ -7,20 +7,49 @@ const matchers = Object.keys(routeAccessMap).map((route) => ({
   allowedRoles: routeAccessMap[route],
 }));
 
-console.log(matchers);
+const isPublicRoute = createRouteMatcher([
+  "/api/webhooks(.*)",
+  "/api/health(.*)",
+  "/sw.js",
+  "/manifest.webmanifest",
+  "/offline(.*)",
+]);
 
 export default clerkMiddleware((auth, req) => {
-  // if (isProtectedRoute(req)) auth().protect()
+  // Generate or forward request correlation ID
+  const requestId = req.headers.get("x-request-id") || crypto.randomUUID();
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set("x-request-id", requestId);
+
+  // Allow public routes (webhooks, health checks, PWA assets) without Clerk redirection
+  if (isPublicRoute(req)) {
+    const res = NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+    res.headers.set("x-request-id", requestId);
+    return res;
+  }
 
   const { sessionClaims } = auth();
-
   const role = (sessionClaims?.metadata as { role?: string })?.role;
 
   for (const { matcher, allowedRoles } of matchers) {
     if (matcher(req) && !allowedRoles.includes(role!)) {
-      return NextResponse.redirect(new URL(`/${role}`, req.url));
+      const redirectRes = NextResponse.redirect(new URL(`/${role}`, req.url));
+      redirectRes.headers.set("x-request-id", requestId);
+      return redirectRes;
     }
   }
+
+  const res = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+  res.headers.set("x-request-id", requestId);
+  return res;
 });
 
 export const config = {

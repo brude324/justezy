@@ -6,6 +6,13 @@ import {
   deleteStudent,
   deleteSubject,
   deleteTeacher,
+  deleteParent,
+  deleteLesson,
+  deleteAssignment,
+  deleteResult,
+  deleteAttendance,
+  deleteEvent,
+  deleteAnnouncement,
 } from "@/lib/actions";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -21,14 +28,13 @@ const deleteActionMap = {
   teacher: deleteTeacher,
   student: deleteStudent,
   exam: deleteExam,
-// TODO: OTHER DELETE ACTIONS
-  parent: deleteSubject,
-  lesson: deleteSubject,
-  assignment: deleteSubject,
-  result: deleteSubject,
-  attendance: deleteSubject,
-  event: deleteSubject,
-  announcement: deleteSubject,
+  parent: deleteParent,
+  lesson: deleteLesson,
+  assignment: deleteAssignment,
+  result: deleteResult,
+  attendance: deleteAttendance,
+  event: deleteEvent,
+  announcement: deleteAnnouncement,
 };
 
 // USE LAZY LOADING
@@ -134,6 +140,8 @@ const FormModal = ({
         toast(`${table} has been deleted!`);
         setOpen(false);
         router.refresh();
+      } else if (state.error && state.message) {
+        toast.error(state.message);
       }
     }, [state, router]);
 
