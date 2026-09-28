@@ -34,7 +34,12 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
   let relatedData = {};
 
   const { userId, sessionClaims } = auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const claims = sessionClaims as Record<string, any> | undefined;
+  const role =
+    claims?.metadata?.role ||
+    claims?.public_metadata?.role ||
+    claims?.publicMetadata?.role ||
+    claims?.role;
   const currentUserId = userId;
 
   const permKey = getRequiredPermission(table, type);

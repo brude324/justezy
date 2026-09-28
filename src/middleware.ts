@@ -15,7 +15,7 @@ const isPublicRoute = createRouteMatcher([
   "/offline(.*)",
 ]);
 
-export default clerkMiddleware((auth, req) => {
+export default clerkMiddleware(async (auth, req) => {
   // Generate or forward request correlation ID
   const requestId = req.headers.get("x-request-id") || crypto.randomUUID();
   const requestHeaders = new Headers(req.headers);
@@ -32,14 +32,56 @@ export default clerkMiddleware((auth, req) => {
     return res;
   }
 
-  const { sessionClaims } = auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const { userId, sessionClaims } = auth();
+  const claims = sessionClaims as Record<string, any> | undefined;
+  let role =
+    claims?.metadata?.role ||
+    claims?.public_metadata?.role ||
+    claims?.publicMetadata?.role ||
+    claims?.role ||
+    req.cookies.get("user_role")?.value;
+
+  // If user is authenticated but role is missing from claims/cookie, resolve from Clerk API
+  if (!role && userId && process.env.CLERK_SECRET_KEY) {
+    try {
+      const clerkRes = await fetch(`https://api.clerk.com/v1/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
+        },
+      });
+      if (clerkRes.ok) {
+        const clerkUser = await clerkRes.json();
+        role = clerkUser.public_metadata?.role;
+      }
+    } catch {
+      // ignore network errors
+    }
+  }
+
+  // If user is already authenticated and visits /sign-in, redirect to their role dashboard
+  const isSignInPage = req.nextUrl.pathname.startsWith("/sign-in");
+  if (isSignInPage && userId && role) {
+    const redirectRes = NextResponse.redirect(new URL(`/${role}`, req.url));
+    redirectRes.headers.set("x-request-id", requestId);
+    redirectRes.cookies.set("user_role", role, { path: "/", maxAge: 86400, sameSite: "lax" });
+    return redirectRes;
+  }
 
   for (const { matcher, allowedRoles } of matchers) {
-    if (matcher(req) && !allowedRoles.includes(role!)) {
-      const redirectRes = NextResponse.redirect(new URL(`/${role}`, req.url));
-      redirectRes.headers.set("x-request-id", requestId);
-      return redirectRes;
+    if (matcher(req)) {
+      // 1. Unauthenticated users cannot access protected routes
+      if (!userId) {
+        const redirectRes = NextResponse.redirect(new URL("/sign-in", req.url));
+        redirectRes.headers.set("x-request-id", requestId);
+        return redirectRes;
+      }
+
+      // 2. Authenticated users with known role cannot access other role routes
+      if (role && !allowedRoles.includes(role)) {
+        const redirectRes = NextResponse.redirect(new URL(`/${role}`, req.url));
+        redirectRes.headers.set("x-request-id", requestId);
+        return redirectRes;
+      }
     }
   }
 
@@ -49,6 +91,11 @@ export default clerkMiddleware((auth, req) => {
     },
   });
   res.headers.set("x-request-id", requestId);
+  if (role) {
+    res.cookies.set("user_role", role, { path: "/", maxAge: 86400, sameSite: "lax" });
+  } else if (!userId) {
+    res.cookies.delete("user_role");
+  }
   return res;
 });
 

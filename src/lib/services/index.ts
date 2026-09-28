@@ -11,4 +11,14 @@ export * from "./attendance-service";
 export * from "./assessment-service";
 export * from "./assignment-service";
 export * from "./communication-service";
-
+export * from "./outbox-service";
+export * from "./fee-service";
+export * from "./payment-gateway-adapter";
+export * from "./payment-service";
+export * from "./ledger-service";
+export * from "./financial-reconciliation";
+export * from "./admissions-service";
+export * from "./library-service";
+export * from "./transport-service";
+export * from "./inventory-service";
+export * from "./asset-service";

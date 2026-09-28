@@ -10,17 +10,20 @@ type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 const EventCalendar = () => {
-  const [value, onChange] = useState<Value>(new Date());
-
+  const [value, setValue] = useState<Value>(new Date());
   const router = useRouter();
 
-  useEffect(() => {
-    if (value instanceof Date) {
-      router.push(`?date=${value}`);
+  const handleDateChange = (val: Value) => {
+    setValue(val);
+    if (val instanceof Date) {
+      const year = val.getFullYear();
+      const month = String(val.getMonth() + 1).padStart(2, "0");
+      const day = String(val.getDate()).padStart(2, "0");
+      router.push(`?date=${year}-${month}-${day}`);
     }
-  }, [value, router]);
+  };
 
-  return <Calendar onChange={onChange} value={value} />;
+  return <Calendar onChange={handleDateChange} value={value} />;
 };
 
 export default EventCalendar;

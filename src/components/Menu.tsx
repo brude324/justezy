@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const menuItems = [
   {
-    title: "MENU",
+    title: "ACADEMICS",
     items: [
       {
         icon: "/home.png",
@@ -93,6 +93,53 @@ const menuItems = [
     ],
   },
   {
+    title: "INSTITUTION & OPERATIONS",
+    items: [
+      {
+        icon: "/singleBranch.png",
+        label: "Admissions",
+        href: "/admissions",
+        visible: ["admin", "teacher", "admissions_officer"],
+      },
+      {
+        icon: "/subject.png",
+        label: "Library",
+        href: "/library",
+        visible: ["admin", "teacher", "librarian", "student", "parent"],
+      },
+      {
+        icon: "/singleLesson.png",
+        label: "Transport",
+        href: "/transport",
+        visible: ["admin", "teacher", "transport_coordinator", "driver", "attendant", "student", "parent"],
+      },
+      {
+        icon: "/singleClass.png",
+        label: "Inventory",
+        href: "/inventory",
+        visible: ["admin", "store_keeper", "procurement_officer"],
+      },
+      {
+        icon: "/setting.png",
+        label: "Fixed Assets",
+        href: "/assets",
+        visible: ["admin", "asset_manager"],
+      },
+      {
+        icon: "/avatar.png",
+        label: "Human Resources",
+        href: "/hr",
+        visible: ["admin", "teacher", "hr_manager", "hr_officer", "staff"],
+      },
+      {
+        icon: "/finance.png",
+        label: "Payroll",
+        href: "/payroll",
+        visible: ["admin", "payroll_manager", "payroll_officer"],
+      },
+    ],
+  },
+  {
     title: "OTHER",
     items: [
       {
@@ -119,7 +166,7 @@ const menuItems = [
 
 const Menu = async () => {
   const user = await currentUser();
-  const role = user?.publicMetadata.role as string;
+  const role = (user?.publicMetadata?.role as string) || "admin";
   return (
     <div className="mt-4 text-sm">
       {menuItems.map((i) => (

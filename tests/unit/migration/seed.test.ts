@@ -15,16 +15,22 @@ import {
 
 describe("Database Seed System Invariants", () => {
   describe("Tier 1: System Foundations", () => {
-    it("should define exactly 7 core and optional feature modules", () => {
-      expect(SYSTEM_MODULES).toHaveLength(7);
+    it("should define core and optional feature modules including V2 Wave 1, Wave 2, Wave 3, Wave 4 & Wave 5", () => {
+      expect(SYSTEM_MODULES).toHaveLength(15);
       const coreModules = SYSTEM_MODULES.filter((m) => m.isCore);
       const optionalModules = SYSTEM_MODULES.filter((m) => !m.isCore);
       expect(coreModules).toHaveLength(3);
-      expect(optionalModules).toHaveLength(4);
+      expect(optionalModules).toHaveLength(12);
+      expect(optionalModules.map((m) => m.moduleKey)).toContain("admissions_module");
+      expect(optionalModules.map((m) => m.moduleKey)).toContain("library_module");
+      expect(optionalModules.map((m) => m.moduleKey)).toContain("transport_module");
+      expect(optionalModules.map((m) => m.moduleKey)).toContain("inventory_module");
+      expect(optionalModules.map((m) => m.moduleKey)).toContain("hr_module");
+      expect(optionalModules.map((m) => m.moduleKey)).toContain("payroll_module");
     });
 
     it("should define audited atomic permissions across categories", () => {
-      expect(SYSTEM_PERMISSIONS).toHaveLength(68);
+      expect(SYSTEM_PERMISSIONS).toHaveLength(166);
 
       // Verify no duplicate keys
       const keys = SYSTEM_PERMISSIONS.map((p) => p.permissionKey);
@@ -32,15 +38,27 @@ describe("Database Seed System Invariants", () => {
       expect(uniqueKeys.size).toBe(SYSTEM_PERMISSIONS.length);
     });
 
-    it("should define 6 predefined system roles with required default scopes", () => {
-      expect(SYSTEM_ROLES).toHaveLength(6);
+    it("should define system roles with required default scopes", () => {
+      expect(SYSTEM_ROLES).toHaveLength(18);
       const roleKeys = SYSTEM_ROLES.map((r) => r.roleKey);
       expect(roleKeys).toContain("INSTITUTION_OWNER");
       expect(roleKeys).toContain("PRINCIPAL");
       expect(roleKeys).toContain("TEACHER");
       expect(roleKeys).toContain("STAFF");
+      expect(roleKeys).toContain("HR_MANAGER");
+      expect(roleKeys).toContain("HR_OFFICER");
+      expect(roleKeys).toContain("PAYROLL_MANAGER");
+      expect(roleKeys).toContain("PAYROLL_OFFICER");
       expect(roleKeys).toContain("STUDENT");
       expect(roleKeys).toContain("PARENT");
+      expect(roleKeys).toContain("FINANCE_OFFICER");
+      expect(roleKeys).toContain("ADMISSIONS_OFFICER");
+      expect(roleKeys).toContain("LIBRARIAN");
+      expect(roleKeys).toContain("TRANSPORT_COORDINATOR");
+      expect(roleKeys).toContain("INVENTORY_MANAGER");
+      expect(roleKeys).toContain("STORE_KEEPER");
+      expect(roleKeys).toContain("PROCUREMENT_OFFICER");
+      expect(roleKeys).toContain("ASSET_MANAGER");
 
       const teacherRole = SYSTEM_ROLES.find((r) => r.roleKey === "TEACHER");
       expect(teacherRole?.defaultScope).toBe("ASSIGNED_ONLY");

@@ -9,16 +9,15 @@ import { useEffect } from "react";
 
 const LoginPage = () => {
   const { isLoaded, isSignedIn, user } = useUser();
-
   const router = useRouter();
 
   useEffect(() => {
-    const role = user?.publicMetadata.role;
-
-    if (role) {
+    if (isLoaded && isSignedIn && user) {
+      const role = (user.publicMetadata?.role as string) || "admin";
+      document.cookie = `user_role=${role}; path=/; max-age=86400; SameSite=Lax`;
       router.push(`/${role}`);
     }
-  }, [user, router]);
+  }, [isLoaded, isSignedIn, user, router]);
 
   return (
     <div className="h-screen flex items-center justify-center bg-lamaSkyLight">

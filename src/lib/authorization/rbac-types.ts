@@ -17,6 +17,14 @@ export interface AuthorizationRequest {
   resourceOwnerUserId?: string;
   targetStudentId?: string;
   targetClassId?: string;
+  targetApplicationId?: string;
+  targetEnquiryId?: string;
+  targetMemberId?: string;
+  targetRouteId?: string;
+  targetWarehouseId?: string;
+  targetAssetId?: string;
+  targetDepartmentId?: string;
+  targetEmploymentId?: string;
   moduleKey?: string;
 }
 
@@ -36,5 +44,14 @@ export interface RequirePermissionOptions {
   resourceOwnerUserId?: string;
   targetStudentId?: string;
   targetClassId?: string;
+  targetApplicationId?: string;
+  targetEnquiryId?: string;
+  targetMemberId?: string;
+  targetRouteId?: string;
+  targetWarehouseId?: string;
+  targetAssetId?: string;
+  targetDepartmentId?: string;
+  targetEmploymentId?: string;
   moduleKey?: string;
 }
+

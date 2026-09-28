@@ -3,7 +3,12 @@ import { auth } from "@clerk/nextjs/server";
 
 const Announcements = async () => {
   const { userId, sessionClaims } = auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const claims = sessionClaims as Record<string, any> | undefined;
+  const role =
+    claims?.metadata?.role ||
+    claims?.public_metadata?.role ||
+    claims?.publicMetadata?.role ||
+    claims?.role;
 
   const roleConditions = {
     teacher: { lessons: { some: { teacherId: userId! } } },
@@ -11,16 +16,20 @@ const Announcements = async () => {
     parent: { students: { some: { parentId: userId! } } },
   };
 
+  const userRole = role || "admin";
+
   const data = await prisma.announcement.findMany({
     take: 3,
     orderBy: { date: "desc" },
     where: {
-      ...(role !== "admin" && {
-        OR: [
-          { classId: null },
-          { class: roleConditions[role as keyof typeof roleConditions] || {} },
-        ],
-      }),
+      ...(userRole !== "admin" && roleConditions[userRole as keyof typeof roleConditions]
+        ? {
+            OR: [
+              { classId: null },
+              { class: roleConditions[userRole as keyof typeof roleConditions] },
+            ],
+          }
+        : {}),
     },
   });
 
