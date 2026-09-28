@@ -42,6 +42,8 @@ export default async function LibraryLoansPage({
     });
   } catch {}
 
+  const now = new Date();
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -118,7 +120,7 @@ export default async function LibraryLoansPage({
                 </tr>
               ) : (
                 loans.map((l: any) => {
-                  const isLate = l.status === "ISSUED" && new Date(l.dueAt) < new Date();
+                  const isLate = l.status === "ISSUED" && new Date(l.dueAt) < now;
                   return (
                     <tr key={l.id} className="hover:bg-slate-50/50">
                       <td className="px-6 py-4">

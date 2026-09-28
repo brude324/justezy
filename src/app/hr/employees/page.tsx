@@ -77,11 +77,13 @@ export default async function HREmployeesPage({
             name="search"
             defaultValue={search}
             placeholder="Search employee name or code..."
+            aria-label="Search employee name or code"
             className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 min-w-[220px]"
           />
           <select
             name="departmentId"
             defaultValue={departmentId || ""}
+            aria-label="Department"
             className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="">All Departments</option>
@@ -94,6 +96,7 @@ export default async function HREmployeesPage({
           <select
             name="status"
             defaultValue={status || ""}
+            aria-label="Employment Status"
             className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="">All Statuses</option>

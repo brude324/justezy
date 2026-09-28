@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import InputField from "../InputField";
 import Image from "next/image";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import {
   studentSchema,
   StudentSchema,
@@ -41,7 +41,7 @@ const StudentForm = ({
     resolver: zodResolver(studentSchema),
   });
 
-  const [img, setImg] = useState<any>();
+  const imgRef = useRef<any>(null);
 
   const [state, formAction] = useFormState(
     type === "create" ? createStudent : updateStudent,
@@ -54,7 +54,7 @@ const StudentForm = ({
   const onSubmit = handleSubmit((data) => {
     console.log("hello");
     console.log(data);
-    formAction({ ...data, img: img?.secure_url });
+    formAction({ ...data, img: imgRef.current?.secure_url });
   });
 
   const router = useRouter();
@@ -107,19 +107,20 @@ const StudentForm = ({
       <CldUploadWidget
         uploadPreset="school"
         onSuccess={(result, { widget }) => {
-          setImg(result.info);
+          imgRef.current = result.info;
           widget.close();
         }}
       >
         {({ open }) => {
           return (
-            <div
-              className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer"
+            <button
+              type="button"
+              className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer bg-transparent border-none p-0"
               onClick={() => open()}
             >
               <Image src="/upload.png" alt="" width={28} height={28} />
               <span>Upload a photo</span>
-            </div>
+            </button>
           );
         }}
       </CldUploadWidget>
@@ -185,8 +186,9 @@ const StudentForm = ({
           />
         )}
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">Sex</label>
+          <label htmlFor="student-sex" className="text-xs text-gray-500">Sex</label>
           <select
+            id="student-sex"
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("sex")}
             defaultValue={data?.sex}
@@ -201,8 +203,9 @@ const StudentForm = ({
           )}
         </div>
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">Grade</label>
+          <label htmlFor="student-grade" className="text-xs text-gray-500">Grade</label>
           <select
+            id="student-grade"
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("gradeId")}
             defaultValue={data?.gradeId}
@@ -220,8 +223,9 @@ const StudentForm = ({
           )}
         </div>
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">Class</label>
+          <label htmlFor="student-class" className="text-xs text-gray-500">Class</label>
           <select
+            id="student-class"
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("classId")}
             defaultValue={data?.classId}

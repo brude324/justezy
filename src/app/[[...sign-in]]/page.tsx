@@ -4,20 +4,18 @@ import * as Clerk from "@clerk/elements/common";
 import * as SignIn from "@clerk/elements/sign-in";
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const LoginPage = () => {
   const { isLoaded, isSignedIn, user } = useUser();
-  const router = useRouter();
 
   useEffect(() => {
     if (isLoaded && isSignedIn && user) {
       const role = (user.publicMetadata?.role as string) || "admin";
       document.cookie = `user_role=${role}; path=/; max-age=86400; SameSite=Lax`;
-      router.push(`/${role}`);
+      window.location.replace(`/${role}`);
     }
-  }, [isLoaded, isSignedIn, user, router]);
+  }, [isLoaded, isSignedIn, user]);
 
   return (
     <div className="h-screen flex items-center justify-center bg-lamaSkyLight">

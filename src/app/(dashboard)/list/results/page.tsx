@@ -8,6 +8,7 @@ import { Prisma } from "@prisma/client";
 import Image from "next/image";
 
 import { auth } from "@clerk/nextjs/server";
+import { dateFormatterUS } from "@/lib/formatters";
 
 type ResultList = {
   id: number;
@@ -85,7 +86,7 @@ const renderRow = (item: ResultList) => (
     </td>
     <td className="hidden md:table-cell">{item.className}</td>
     <td className="hidden md:table-cell">
-      {new Intl.DateTimeFormat("en-US").format(item.startTime)}
+      {dateFormatterUS.format(item.startTime)}
     </td>
     <td>
       <div className="flex items-center gap-2">

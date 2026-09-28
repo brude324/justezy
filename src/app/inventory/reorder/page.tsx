@@ -55,8 +55,8 @@ export default async function InventoryReorderPage() {
                 </td>
               </tr>
             ) : (
-              lowStockAlerts.map((alert, idx) => (
-                <tr key={idx} className="hover:bg-slate-50 transition">
+              lowStockAlerts.map((alert) => (
+                <tr key={alert.rule.id} className="hover:bg-slate-50 transition">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-indigo-600 font-medium">
                     <Link href={`/inventory/items/${alert.rule.item.id}`}>{alert.rule.item.sku}</Link>
                   </td>

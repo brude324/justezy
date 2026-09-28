@@ -722,15 +722,17 @@ export class PayrollService {
 
       if (financialPeriod) {
         // Resolve Ledger Accounts
-        const salaryExpenseAccount = await tx.chartOfAccount.findFirst({
-          where: { tenantId, accountType: "EXPENSE" },
-        });
-        const payrollPayableAccount = await tx.chartOfAccount.findFirst({
-          where: { tenantId, accountType: "LIABILITY" },
-        });
-        const taxPayableAccount = await tx.chartOfAccount.findFirst({
-          where: { tenantId, accountType: "LIABILITY" },
-        });
+        const [salaryExpenseAccount, payrollPayableAccount, taxPayableAccount] = await Promise.all([
+          tx.chartOfAccount.findFirst({
+            where: { tenantId, accountType: "EXPENSE" },
+          }),
+          tx.chartOfAccount.findFirst({
+            where: { tenantId, accountType: "LIABILITY" },
+          }),
+          tx.chartOfAccount.findFirst({
+            where: { tenantId, accountType: "LIABILITY" },
+          }),
+        ]);
 
         if (salaryExpenseAccount && payrollPayableAccount) {
           const grossAmount = (run as any).totalGrossEarnings || (run as any).totalGrossPay || new Decimal(0);

@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+// react-doctor-disable-next-line react-doctor/prefer-dynamic-import
 import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from "recharts";
 
 const data = [

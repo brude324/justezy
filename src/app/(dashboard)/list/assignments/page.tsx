@@ -7,6 +7,7 @@ import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Assignment, Class, Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
+import { dateFormatterUS } from "@/lib/formatters";
 
 type AssignmentList = Assignment & {
   lesson: {
@@ -67,7 +68,7 @@ const AssignmentListPage = async ({
         {item.lesson.teacher.name + " " + item.lesson.teacher.surname}
       </td>
       <td className="hidden md:table-cell">
-        {new Intl.DateTimeFormat("en-US").format(item.dueDate)}
+        {dateFormatterUS.format(item.dueDate)}
       </td>
       <td>
         <div className="flex items-center gap-2">

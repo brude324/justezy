@@ -84,6 +84,7 @@ export default async function PayrollEmployeesPage({
             name="search"
             defaultValue={searchParams.search}
             placeholder="Search employee name or code..."
+            aria-label="Search employee name or code"
             className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 min-w-[240px]"
           />
           <button

@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import InputField from "../InputField";
 import Image from "next/image";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { teacherSchema, TeacherSchema } from "@/lib/formValidationSchemas";
 import { useFormState } from "react-dom";
 import { createTeacher, updateTeacher } from "@/lib/actions";
@@ -31,7 +31,7 @@ const TeacherForm = ({
     resolver: zodResolver(teacherSchema),
   });
 
-  const [img, setImg] = useState<any>();
+  const imgRef = useRef<any>(null);
 
   const [state, formAction] = useFormState(
     type === "create" ? createTeacher : updateTeacher,
@@ -43,7 +43,7 @@ const TeacherForm = ({
 
   const onSubmit = handleSubmit((data) => {
     console.log(data);
-    formAction({ ...data, img: img?.secure_url });
+    formAction({ ...data, img: imgRef.current?.secure_url });
   });
 
   const router = useRouter();
@@ -148,8 +148,9 @@ const TeacherForm = ({
           />
         )}
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">Sex</label>
+          <label htmlFor="teacher-sex" className="text-xs text-gray-500">Sex</label>
           <select
+            id="teacher-sex"
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("sex")}
             defaultValue={data?.sex}
@@ -164,8 +165,9 @@ const TeacherForm = ({
           )}
         </div>
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">Subjects</label>
+          <label htmlFor="teacher-subjects" className="text-xs text-gray-500">Subjects</label>
           <select
+            id="teacher-subjects"
             multiple
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("subjects")}
@@ -186,19 +188,20 @@ const TeacherForm = ({
         <CldUploadWidget
           uploadPreset="school"
           onSuccess={(result, { widget }) => {
-            setImg(result.info);
+            imgRef.current = result.info;
             widget.close();
           }}
         >
           {({ open }) => {
             return (
-              <div
-                className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer"
+              <button
+                type="button"
+                className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer bg-transparent border-none p-0"
                 onClick={() => open()}
               >
                 <Image src="/upload.png" alt="" width={28} height={28} />
                 <span>Upload a photo</span>
-              </div>
+              </button>
             );
           }}
         </CldUploadWidget>
@@ -206,7 +209,7 @@ const TeacherForm = ({
       {state.error && (
         <span className="text-red-500">Something went wrong!</span>
       )}
-      <button className="bg-blue-400 text-white p-2 rounded-md">
+      <button type="submit" className="bg-blue-400 text-white p-2 rounded-md">
         {type === "create" ? "Create" : "Update"}
       </button>
     </form>

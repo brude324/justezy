@@ -7,6 +7,7 @@ import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class, Exam, Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
+import { dateFormatterUS } from "@/lib/formatters";
 
 type ExamList = Exam & {
   lesson: {
@@ -67,7 +68,7 @@ const renderRow = (item: ExamList) => (
       {item.lesson.teacher.name + " " + item.lesson.teacher.surname}
     </td>
     <td className="hidden md:table-cell">
-      {new Intl.DateTimeFormat("en-US").format(item.startTime)}
+      {dateFormatterUS.format(item.startTime)}
     </td>
     <td>
       <div className="flex items-center gap-2">

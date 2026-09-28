@@ -99,26 +99,26 @@ export class AttendanceService {
     }
 
     return await db.$transaction(async (tx) => {
-      // 1. Create correction log
-      const correction = await tx.attendanceCorrection.create({
-        data: {
-          tenantId: input.tenantId,
-          attendanceRecordId: record.id,
-          previousStatus: record.status,
-          newStatus: input.newStatus,
-          reason: input.reason.trim(),
-          requestedByUserId: input.requestedByUserId,
-          approvedByUserId: input.approvedByUserId,
-        },
-      });
-
-      // 2. Update status on record
-      const updatedRecord = await tx.attendanceRecord.update({
-        where: { id: record.id },
-        data: {
-          status: input.newStatus,
-        },
-      });
+      // 1. Create correction log and update status on record in parallel
+      const [correction, updatedRecord] = await Promise.all([
+        tx.attendanceCorrection.create({
+          data: {
+            tenantId: input.tenantId,
+            attendanceRecordId: record.id,
+            previousStatus: record.status,
+            newStatus: input.newStatus,
+            reason: input.reason.trim(),
+            requestedByUserId: input.requestedByUserId,
+            approvedByUserId: input.approvedByUserId,
+          },
+        }),
+        tx.attendanceRecord.update({
+          where: { id: record.id },
+          data: {
+            status: input.newStatus,
+          },
+        }),
+      ]);
 
       // 3. Audit log
       await tx.auditLog.create({

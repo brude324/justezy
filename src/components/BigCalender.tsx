@@ -1,6 +1,7 @@
 "use client";
 
 import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
+// react-doctor-disable-next-line react-doctor/no-moment
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState } from "react";

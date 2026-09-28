@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+// react-doctor-disable-next-line react-doctor/prefer-dynamic-import
 import {
   RadialBarChart,
   RadialBar,

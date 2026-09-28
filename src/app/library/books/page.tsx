@@ -59,6 +59,7 @@ export default async function LibraryBooksPage({
             name="search"
             defaultValue={search}
             placeholder="Search by title, ISBN, or subject..."
+            aria-label="Search by title, ISBN, or subject"
             className="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
           <button

@@ -59,24 +59,23 @@ export class FinancialReconciliationService {
     logger.info("[FinancialReconciliation] Commencing financial pilot reconciliation", { tenantId });
 
     // 1. Fetch all student profiles and their invoices/payments in tenant
-    const invoices = await db.feeInvoice.findMany({
-      where: { tenantId },
-      include: { allocations: true },
-    });
-
-    const payments = await db.payment.findMany({
-      where: { tenantId },
-      include: { allocations: true, refunds: true },
-    });
-
-    const journalEntries = await db.journalEntry.findMany({
-      where: { tenantId, status: "POSTED" },
-      include: { lines: true },
-    });
-
-    const accounts = await db.chartOfAccount.findMany({
-      where: { tenantId },
-    });
+    const [invoices, payments, journalEntries, accounts] = await Promise.all([
+      db.feeInvoice.findMany({
+        where: { tenantId },
+        include: { allocations: true },
+      }),
+      db.payment.findMany({
+        where: { tenantId },
+        include: { allocations: true, refunds: true },
+      }),
+      db.journalEntry.findMany({
+        where: { tenantId, status: "POSTED" },
+        include: { lines: true },
+      }),
+      db.chartOfAccount.findMany({
+        where: { tenantId },
+      }),
+    ]);
 
     // --- STUDENT RECONCILIATION ---
     const studentMap = new Map<

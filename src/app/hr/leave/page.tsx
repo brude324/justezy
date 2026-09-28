@@ -81,6 +81,7 @@ export default async function HRLeavePage({
           <select
             name="status"
             defaultValue={status || ""}
+            aria-label="Application Status"
             className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="">All Application Statuses</option>

@@ -105,7 +105,7 @@ export default async function AdmissionsOverviewPage() {
               </div>
               <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
                 <div
-                  className="bg-indigo-600 h-3 rounded-full transition-all duration-500"
+                  className="bg-indigo-600 h-3 rounded-full transition-[width] duration-500"
                   style={{ width: `${Math.min(100, funnel.overview.conversionRatePercent)}%` }}
                 />
               </div>

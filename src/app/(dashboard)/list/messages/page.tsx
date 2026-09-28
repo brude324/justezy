@@ -16,6 +16,13 @@ type MessageItem = {
   targetAudience: string;
 };
 
+const messageDateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
 const MessagesListPage = async ({
   searchParams,
 }: {
@@ -62,12 +69,7 @@ const MessagesListPage = async ({
         </span>
       </td>
       <td className="text-slate-500">
-        {new Intl.DateTimeFormat("en-US", {
-          month: "short",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        }).format(item.date)}
+        {messageDateFormatter.format(item.date)}
       </td>
     </tr>
   );

@@ -107,8 +107,8 @@ export default async function PayrollPayslipDetailPage({ params }: { params: { i
               Earnings
             </h2>
             <div className="space-y-2 text-sm">
-              {earningsList.map((e: any, idx: number) => (
-                <div key={idx} className="flex justify-between items-center py-1">
+              {earningsList.map((e: any) => (
+                <div key={e.name} className="flex justify-between items-center py-1">
                   <span className="text-slate-600">{e.name}</span>
                   <span className="font-mono font-medium text-slate-900">₹{e.amount}</span>
                 </div>
@@ -126,8 +126,8 @@ export default async function PayrollPayslipDetailPage({ params }: { params: { i
               Deductions
             </h2>
             <div className="space-y-2 text-sm">
-              {deductionsList.map((d: any, idx: number) => (
-                <div key={idx} className="flex justify-between items-center py-1">
+              {deductionsList.map((d: any) => (
+                <div key={d.name} className="flex justify-between items-center py-1">
                   <span className="text-slate-600">{d.name}</span>
                   <span className="font-mono font-medium text-rose-600">₹{d.amount}</span>
                 </div>

@@ -7,6 +7,7 @@ import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class, Event, Prisma } from "@prisma/client";
 import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
+import { dateFormatterUS } from "@/lib/formatters";
 
 type EventList = Event & { class: Class };
 
@@ -62,7 +63,7 @@ const EventListPage = async ({
       <td className="flex items-center gap-4 p-4">{item.title}</td>
       <td>{item.class?.name || "-"}</td>
       <td className="hidden md:table-cell">
-        {new Intl.DateTimeFormat("en-US").format(item.startTime)}
+        {dateFormatterUS.format(item.startTime)}
       </td>
       <td className="hidden md:table-cell">
         {item.startTime.toLocaleTimeString("en-US", {

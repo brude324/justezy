@@ -326,27 +326,29 @@ export const createTeacher = async (
       }
 
       // 2. Ensure application user and membership exist
-      const appUser = await prismaTarget.user.upsert({
-        where: { clerkId: clerkUserId },
-        create: {
-          clerkId: clerkUserId,
-          email: data.email || `${data.username}@institution.edu`,
-          firstName: data.name,
-          lastName: data.surname,
-          displayName: `${data.name} ${data.surname}`,
-        },
-        update: {},
-      });
+      const [appUser, existingTeacherRole] = await Promise.all([
+        prismaTarget.user.upsert({
+          where: { clerkId: clerkUserId },
+          create: {
+            clerkId: clerkUserId,
+            email: data.email || `${data.username}@institution.edu`,
+            firstName: data.name,
+            lastName: data.surname,
+            displayName: `${data.name} ${data.surname}`,
+          },
+          update: {},
+        }),
+        prismaTarget.role.findFirst({
+          where: {
+            OR: [
+              { tenantId: context.tenant.id, roleKey: "TEACHER" },
+              { tenantId: null, roleKey: "TEACHER" },
+            ],
+          },
+        }),
+      ]);
 
-      // Find TEACHER role in target schema
-      let teacherRole = await prismaTarget.role.findFirst({
-        where: {
-          OR: [
-            { tenantId: context.tenant.id, roleKey: "TEACHER" },
-            { tenantId: null, roleKey: "TEACHER" },
-          ],
-        },
-      });
+      let teacherRole = existingTeacherRole;
       if (!teacherRole) {
         teacherRole = await prismaTarget.role.create({
           data: {

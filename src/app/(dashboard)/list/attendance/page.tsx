@@ -6,6 +6,7 @@ import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Prisma } from "@prisma/client";
 import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
+import { dateFormatterUS } from "@/lib/formatters";
 
 type AttendanceList = {
   id: number;
@@ -62,7 +63,7 @@ const AttendanceListPage = async ({
       <td>{item.className}</td>
       <td className="hidden md:table-cell">{item.subjectName}</td>
       <td className="hidden md:table-cell">
-        {new Intl.DateTimeFormat("en-US").format(item.date)}
+        {dateFormatterUS.format(item.date)}
       </td>
       <td>
         <span

@@ -95,8 +95,8 @@ export default async function PayrollReportsPage() {
                   </td>
                 </tr>
               ) : (
-                summaryReport.periodsSummary.map((p: any, idx: number) => (
-                  <tr key={idx} className="hover:bg-slate-50 transition">
+                summaryReport.periodsSummary.map((p: any) => (
+                <tr key={p.periodCode} className="hover:bg-slate-50 transition">
                     <td className="px-6 py-4 font-medium text-slate-900">{p.periodName}</td>
                     <td className="px-6 py-4 font-mono text-xs">{p.periodCode}</td>
                     <td className="px-6 py-4 text-right font-mono">₹{p.gross}</td>

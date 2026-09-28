@@ -25,6 +25,7 @@ const TableSearch = () => {
       <input
         type="text"
         placeholder="Search..."
+        aria-label="Search"
         className="w-[200px] p-2 bg-transparent outline-none"
       />
     </form>

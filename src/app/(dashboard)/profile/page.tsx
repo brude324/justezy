@@ -24,6 +24,7 @@ export default async function ProfilePage() {
                   src={user.imageUrl}
                   alt={name}
                   fill
+                  sizes="96px"
                   className="object-cover"
                 />
               ) : (
@@ -31,6 +32,7 @@ export default async function ProfilePage() {
                   src="/noAvatar.png"
                   alt="avatar"
                   fill
+                  sizes="96px"
                   className="object-cover"
                 />
               )}

@@ -61,6 +61,7 @@ export default async function PayrollRunsPage({
           <select
             name="status"
             defaultValue={status || ""}
+            aria-label="Run Status"
             className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
           >
             <option value="">All Run Statuses</option>
